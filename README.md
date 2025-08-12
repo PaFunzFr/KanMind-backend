@@ -1,24 +1,22 @@
 # Kanban Board Backend Project
 
-![KanMind Logo](assets/icons/logo_icon.svg)
-
 Dies ist das Backend für eine Django REST API Anwendung.
 Das Projekt basiert auf Django und Django REST Framework und nutzt eine klassische App‑Struktur (z.B. app_auth, app_board, app_task).
 Mit dieser API kannst du Benutzerauthentifizierung, Boards und Aufgaben verwalten.
 
 ---
 
-## Projectstruktur
+## Projektstruktur
 
-backend/
-├── app_auth/
-├── app_board/
-├── app_task/
-├── core/
-├── env/                  # lokale virtuelle Umgebung (ignored)
-├── manage.py
-├── requirements.txt
-└── .gitignore
+> backend/
+> ├── app_auth/
+> ├── app_board/
+> ├── app_task/
+> ├── core/
+> ├── env/                  # lokale virtuelle Umgebung (ignored)
+> ├── manage.py
+> ├── requirements.txt
+> └── .gitignore
 
 ---
 
