@@ -30,9 +30,8 @@ class RegistrationView(APIView):
             data = {
                 'token':token.key,
                 'username': saved_account.username,
-                'first_name':saved_account.first_name,
-                'last_name':saved_account.last_name,
-                'email':saved_account.email
+                'email':saved_account.email,
+                'id': saved_account.pk
             }
         else:
             data = serializer.errors
