@@ -8,15 +8,15 @@ Mit dieser API kannst du Benutzerauthentifizierung, Boards und Aufgaben verwalte
 
 ## Projektstruktur
 
-> backend/
-> ├── app_auth/
-> ├── app_board/
-> ├── app_task/
-> ├── core/
-> ├── env/                  # lokale virtuelle Umgebung (ignored)
-> ├── manage.py
-> ├── requirements.txt
-> └── .gitignore
+> backend/. 
+> ├── app_auth/<br>
+> ├── app_board/<br>
+> ├── app_task/<br>
+> ├── core/<br>
+> ├── env/                  # lokale virtuelle Umgebung (ignored)<br>
+> ├── manage.py<br>
+> ├── requirements.txt<br>
+> └── .gitignore<br>
 
 ---
 
