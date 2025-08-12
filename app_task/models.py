@@ -1,6 +1,6 @@
 from django.db import models
-from ..app_auth.models import User
-from ..app_board.models import Board
+from app_auth.models import User
+from app_board.models import Board
 
 class Task(models.Model):
     title = models.CharField(max_length=25, unique=True, null=False, blank=False)
@@ -13,5 +13,8 @@ class Task(models.Model):
         ('done', 'Done'),
     ], default='todo')
     due_date = models.DateField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True )
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
