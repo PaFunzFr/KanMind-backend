@@ -63,10 +63,12 @@ class BoardSerializer(serializers.ModelSerializer):
 
 class BoardRetrieveSerializer(serializers.ModelSerializer):
     members = BoardMemberSerializer(many=True, read_only=True)
+    owner_data = BoardMemberSerializer(read_only=True, source='owner_id')
 
     class Meta:
         model = Board
-        fields = ['id', 'title', 'owner_id', 'members']
+        fields = ['id', 'title', 'owner_data', 'members']
+
 
 
 class BoardUpdateSerializer(serializers.ModelSerializer):
