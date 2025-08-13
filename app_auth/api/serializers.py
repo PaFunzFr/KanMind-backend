@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -18,7 +19,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'full_name', 'email', 'password', 'repeated_password')
+        fields = ['first_name', 'last_name', 'full_name', 'email', 'password', 'repeated_password']
         extra_kwargs = {
             'password': {'write_only': True}, # password write-only
             'first_name': {'write_only': True},
