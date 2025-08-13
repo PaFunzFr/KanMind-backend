@@ -1,5 +1,6 @@
 from django.db import models
-from app_auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 from app_board.models import Board
 
 class Task(models.Model):

@@ -1,7 +1,8 @@
 from rest_framework import generics
-from app_auth.models import UserProfile
+from app_auth.models import CustomUser
 from .serializers import UserSerializer, RegistrationSerializer, UserDetailSerializer
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.authtoken.models import Token
@@ -29,7 +30,7 @@ class RegistrationView(APIView):
             token, created = Token.objects.get_or_create(user=saved_account)
             data = {
                 'token':token.key,
-                'username': saved_account.username,
+                'full_name': saved_account.full_name,
                 'email':saved_account.email,
                 'id': saved_account.pk
             }
