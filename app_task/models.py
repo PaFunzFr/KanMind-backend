@@ -7,7 +7,7 @@ class Task(models.Model):
     title = models.CharField(max_length=25, unique=True, null=False, blank=False)
     description = models.TextField(max_length=250)
     board = models.ForeignKey(Board, related_name='tasks', on_delete=models.CASCADE)
-    assignee = models.ManyToManyField(User, related_name='assigned_tasks')
+    assignee = models.ForeignKey(User, related_name='assigned_tasks', on_delete=models.CASCADE)
     reviewer = models.ForeignKey(User, related_name='reviewing_tasks', on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=[
         ('to-do', 'To Do'),
@@ -30,7 +30,7 @@ class Task(models.Model):
 
 class TaskComment(models.Model):
     author = models.ForeignKey(User, related_name='commented_tasks', on_delete=models.CASCADE)
-    task = models.ForeignKey(Task, related_name='task_comments', on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, related_name='comments', on_delete=models.CASCADE)
     content = models.CharField(max_length=250, blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
