@@ -1,13 +1,9 @@
 from rest_framework import serializers
+from app_auth.api.serializers import UserInfoSerializer
 from app_board.models import Board
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
-
-class BoardMemberSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id','full_name', 'email']
 
 class BoardSerializer(serializers.ModelSerializer):
     """ Fields Write Only """
@@ -85,8 +81,8 @@ class BoardSerializer(serializers.ModelSerializer):
     
 
 class BoardRetrieveSerializer(serializers.ModelSerializer):
-    members = BoardMemberSerializer(many=True, read_only=True)
-    owner_data = BoardMemberSerializer(read_only=True, source='owner_id')
+    members = UserInfoSerializer(many=True, read_only=True)
+    owner_data = UserInfoSerializer(read_only=True, source='owner_id')
 
     class Meta:
         model = Board

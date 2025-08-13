@@ -13,6 +13,10 @@ class UserDetailSerializer(serializers.ModelSerializer):
         model = User # used Model (overwritten) => CustomUser => path(.... name='customuser-detail') not user-detail
         fields = ['id', 'first_name', 'last_name', 'email']
 
+class UserInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User 
+        fields = ['id', 'full_name', 'email']
 
 class RegistrationSerializer(serializers.ModelSerializer):
     repeated_password = serializers.CharField(write_only=True)
