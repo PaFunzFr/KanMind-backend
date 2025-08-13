@@ -5,17 +5,37 @@ from app_board.models import Board
 
 class Task(models.Model):
     title = models.CharField(max_length=25, unique=True, null=False, blank=False)
+    description = models.TextField(max_length=250)
     board = models.ForeignKey(Board, related_name='tasks', on_delete=models.CASCADE)
-    assigned_to = models.ManyToManyField(User, related_name='assigned_tasks')
-    reviewed_by = models.ForeignKey(User, related_name='reviewing_tasks', on_delete=models.CASCADE)
+    assignee = models.ManyToManyField(User, related_name='assigned_tasks')
+    reviewer = models.ForeignKey(User, related_name='reviewing_tasks', on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=[
-        ('todo', 'To Do'),
-        ('in_progress', 'In Progress'),
+        ('to-do', 'To Do'),
+        ('in-progress', 'In Progress'),
+        ('review', 'Reviewing'),
         ('done', 'Done'),
     ], default='todo')
+    priority = models.CharField(max_length=20, choices=[
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+    ], default ='medium')
     due_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True )
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
+    
+
+class TaskComment(models.Model):
+    author = models.ForeignKey(User, related_name='commented_tasks', on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, related_name='task_comments', on_delete=models.CASCADE)
+    content = models.CharField(max_length=250, blank=False, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Comment by {self.author.email} on {self.task.title}"

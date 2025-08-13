@@ -21,20 +21,43 @@ class BoardSerializer(serializers.ModelSerializer):
     """ Fields Read Only """
     url = serializers.HyperlinkedIdentityField(view_name='board-detail', lookup_field='pk')
     member_count = serializers.SerializerMethodField()
-    # ticket_count = serializers.SerializerMethodField()
-    # tasks_to_do_count = serializers.SerializerMethodField()
-    # tasks_high_prio_count = serializers.SerializerMethodField()
+    ticket_count = serializers.SerializerMethodField()
+    tasks_to_do_count = serializers.SerializerMethodField()
+    tasks_high_prio_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Board
-        fields = ['id', 'url', 'title', 'owner_id', 'members', 'member_count']
+        fields = [
+                'id',
+                'url',
+                'title',
+                'member_count',
+                'ticket_count',
+                'tasks_to_do_count',
+                'tasks_high_prio_count',
+                'owner_id',
+                'members'
+                ]
         read_only_fields = ['id', 'created_at', 'owner_id']
+        write_only_fields = ['members']
 
     def get_member_count(self, obj):
         """
         Displays the number of members for a given board.
         """
         return obj.members.count()
+    
+    def get_ticket_count(self, obj):
+        return obj.tasks.count()
+    
+    def get_tasks_to_do_count(self, obj):
+        tasks = obj.tasks.filter(status='todo').count()
+        return tasks
+    
+    def get_tasks_high_prio_count(self, obj):
+        tasks = obj.tasks.filter(priority='high').count()
+        return tasks
+
 
     # """Override the default update method to handle nested data"""
     # def update(self, instance, validated_data):
