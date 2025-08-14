@@ -3,10 +3,12 @@ from app_task.models import Task
 from app_board.models import Board
 from app_auth.api.serializers import UserInfoSerializer
 from django.contrib.auth import get_user_model
+from .mixins import CommentCountMixin
 
 User = get_user_model()
 
-class TaskSerializer(serializers.ModelSerializer):
+
+class TaskSerializer(CommentCountMixin, serializers.ModelSerializer):
     """ Fields Write Only """
     assignee_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
@@ -25,43 +27,32 @@ class TaskSerializer(serializers.ModelSerializer):
     )
 
     """ Fields Read Only """
-    url = serializers.HyperlinkedIdentityField(view_name='task-detail', lookup_field='pk')
+    url = serializers.HyperlinkedIdentityField(
+        view_name='task-detail',
+        lookup_field='pk'
+    )
     comments_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Task
-        fields = [
-                'id',
-                'url',
-                'title',
-                'description',
-                'status',
-                'priority',
-                'assignee',
-                'reviewer',
-                'due_date',
-                'comments_count',
-                'assignee_id',
-                'reviewer_id',
-                'board',
-                ]
+        fields = ['id','url','title','description','status','priority','assignee',
+                  'reviewer','due_date','comments_count','assignee_id','reviewer_id','board',]
         read_only_fields = ['id', 'assignee', 'reviewer', 'comments_count']
 
-    def get_comments_count(self, obj):
-        """
-        Displays the number of task for a given task.
-        """
-        return obj.comments.count()
-    
-class TaskRetrieveSerializer(serializers.ModelSerializer):
+
+class TaskRetrieveSerializer(CommentCountMixin, serializers.ModelSerializer):
     """ Fields Read Only """
     assignee = UserInfoSerializer(read_only=True)
     reviewer = UserInfoSerializer(read_only=True)
+    comments_count = serializers.SerializerMethodField()
+
     class Meta:
         model = Task
-        fields = ['title', 'description', 'assignee', 'reviewer', 'due_date', 'priority', 'status']
+        fields = ['title', 'description', 'assignee',
+                  'reviewer', 'due_date', 'priority', 'status','comments_count']
 
-class TaskUpdateSerializer(serializers.ModelSerializer):
+
+class TaskUpdateSerializer(TaskRetrieveSerializer):
     """ Fields Write Only """
     assignee_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
@@ -75,6 +66,8 @@ class TaskUpdateSerializer(serializers.ModelSerializer):
         required=False,
         source='reviewer'
     )
+
     class Meta:
         model = Task
-        fields = ['title', 'description', 'reviewer_id', 'assignee_id', 'due_date', 'priority', 'status']
+        fields = ['title', 'description', 'assignee', 'reviewer',
+                  'reviewer_id', 'assignee_id', 'due_date', 'priority', 'status']

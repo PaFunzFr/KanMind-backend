@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from app_auth.api.serializers import UserInfoSerializer
+from app_task.api.serializers import TaskRetrieveSerializer
 from app_board.models import Board
 from django.contrib.auth import get_user_model
 
@@ -54,39 +55,15 @@ class BoardSerializer(serializers.ModelSerializer):
         tasks = obj.tasks.filter(priority='high').count()
         return tasks
 
-
-    # """Override the default update method to handle nested data"""
-    # def update(self, instance, validated_data):
-    #     members_to_add = validated_data.pop('member_ids', None) # get member_ids from the validated data
-
-    #     """Update the board with the provided data."""
-    #     for attr, value in validated_data.items():
-    #         setattr(instance, attr, value)
-    #     instance.save()
-
-    #     """If there are new members, update the board"""
-    #     if members_to_add is not None:
-    #         instance.members.set(members_to_add)
-
-    #     return instance
-
-    # def create(self, validated_data):
-    #     members_to_add = validated_data.pop('member_ids', None)
-    #     board = Board.objects.create(**validated_data)
-
-    #     if members_to_add:
-    #         board.members.set(members_to_add)
-
-    #     return board
-    
-
 class BoardRetrieveSerializer(serializers.ModelSerializer):
     members = UserInfoSerializer(many=True, read_only=True)
     owner_data = UserInfoSerializer(read_only=True, source='owner_id')
+    tasks = TaskRetrieveSerializer(many=True, read_only=True)
+
 
     class Meta:
         model = Board
-        fields = ['id', 'title', 'owner_data', 'members']
+        fields = ['id', 'title', 'owner_data', 'tasks', 'members']
 
 
 
