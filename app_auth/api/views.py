@@ -1,6 +1,6 @@
 from rest_framework import generics
-from app_auth.models import CustomUser
-from .serializers import UserSerializer, RegistrationSerializer, UserDetailSerializer
+from rest_framework import status
+from .serializers import UserSerializer, RegistrationSerializer, UserDetailSerializer, LoginSerializer
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAdminUser
@@ -31,7 +31,7 @@ class RegistrationView(APIView):
             token, created = Token.objects.get_or_create(user=saved_account)
             data = {
                 'token':token.key,
-                'full_name': saved_account.full_name,
+                'fullname': saved_account.fullname,
                 'email':saved_account.email,
                 'id': saved_account.pk
             }
@@ -39,3 +39,25 @@ class RegistrationView(APIView):
             data = serializer.errors
 
         return Response(data)
+    
+class LoginView(APIView):
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            
+            # create or get token
+            token, created = Token.objects.get_or_create(user=user)
+            
+            # response with token and user data
+            return Response({
+                "token": token.key,
+                "fullname": user.fullname,
+                "email": user.email,
+                "user_id": user.id
+            }, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

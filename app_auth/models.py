@@ -56,8 +56,8 @@ class CustomUser(AbstractUser):
         verbose_name_plural = "Users"
 
     @property
-    def full_name(self):
+    def fullname(self):
         return f"{self.first_name} {self.last_name}"
 
     def __str__(self):
-        return self.full_name
+        return self.fullname
