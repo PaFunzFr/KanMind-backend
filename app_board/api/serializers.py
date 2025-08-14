@@ -16,6 +16,9 @@ class BoardSerializer(serializers.ModelSerializer):
     )
 
     """ Fields Read Only """
+    # title: unique=True in model => DRF handles validation automatically
+    # owner_id: set automatically in perform_create() => read-only here
+    # created_at: auto_now_add=True in model => read-only
     url = serializers.HyperlinkedIdentityField(view_name='board-detail', lookup_field='pk')
     member_count = serializers.SerializerMethodField()
     ticket_count = serializers.SerializerMethodField()
@@ -24,16 +27,8 @@ class BoardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Board
-        fields = [
-                'id',
-                'url',
-                'title',
-                'member_count',
-                'ticket_count',
-                'tasks_to_do_count',
-                'tasks_high_prio_count',
-                'owner_id',
-                'members'
+        fields = ['id','url','title','member_count','ticket_count','tasks_to_do_count',
+                  'tasks_high_prio_count','owner_id','members'
                 ]
         read_only_fields = ['id', 'created_at', 'owner_id']
         write_only_fields = ['members']
@@ -60,11 +55,9 @@ class BoardRetrieveSerializer(serializers.ModelSerializer):
     owner_data = UserInfoSerializer(read_only=True, source='owner_id')
     tasks = TaskRetrieveSerializer(many=True, read_only=True)
 
-
     class Meta:
         model = Board
         fields = ['id', 'title', 'owner_data', 'tasks', 'members']
-
 
 
 class BoardUpdateSerializer(serializers.ModelSerializer):
@@ -73,6 +66,7 @@ class BoardUpdateSerializer(serializers.ModelSerializer):
         queryset=User.objects.all(),
         required=False
     )
+    
     class Meta:
         model = Board
         fields = ['title', 'members']
