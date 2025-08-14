@@ -52,21 +52,24 @@ class BoardSerializer(serializers.ModelSerializer):
 
 class BoardRetrieveSerializer(serializers.ModelSerializer):
     members = UserInfoSerializer(many=True, read_only=True)
-    owner_data = UserInfoSerializer(read_only=True, source='owner_id')
     tasks = TaskRetrieveSerializer(many=True, read_only=True)
 
     class Meta:
         model = Board
-        fields = ['id', 'title', 'owner_data', 'tasks', 'members']
+        fields = ['id', 'title', 'owner_id', 'members', 'tasks']
 
 
 class BoardUpdateSerializer(serializers.ModelSerializer):
+    owner_data = UserInfoSerializer(read_only=True, source='owner_id')
+    members_data = UserInfoSerializer(many=True, read_only=True, source='members')
     members = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=User.objects.all(),
-        required=False
+        required=False,
+        write_only=True
     )
-    
+
     class Meta:
         model = Board
-        fields = ['title', 'members']
+        fields = ['id', 'title', 'owner_data', 'members_data', 'members']
+        read_only_fields = ['id', 'owner_data', "members_data"]

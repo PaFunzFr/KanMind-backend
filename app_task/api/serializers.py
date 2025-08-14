@@ -48,8 +48,8 @@ class TaskRetrieveSerializer(CommentCountMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ['title', 'description', 'assignee',
-                  'reviewer', 'due_date', 'priority', 'status','comments_count']
+        fields = ['id', 'title', 'description', 'status', 'priority', 'assignee',
+                  'reviewer', 'due_date', 'comments_count']
 
 
 class TaskUpdateSerializer(TaskRetrieveSerializer):
