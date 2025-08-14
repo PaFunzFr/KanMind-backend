@@ -1,6 +1,7 @@
+from django.forms import ValidationError
 from rest_framework import generics
-from app_task.models import Task
-from .serializers import TaskSerializer, TaskRetrieveSerializer, TaskUpdateSerializer
+from app_task.models import Task, TaskComment
+from .serializers import TaskSerializer, TaskRetrieveSerializer, TaskUpdateSerializer, TaskCommentSerializer
 
 class TaskList(generics.ListCreateAPIView):
     queryset = Task.objects.all()
@@ -15,3 +16,22 @@ class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method in ['PATCH', 'PUT']:
             return TaskUpdateSerializer
         return TaskRetrieveSerializer # Default => GET
+    
+class CommentList(generics.ListCreateAPIView):
+    serializer_class = TaskCommentSerializer
+
+    def get_queryset(self):
+        task_pk = self.kwargs['pk']  # Task-ID from URL
+        return TaskComment.objects.filter(task=task_pk)
+
+    def perform_create(self, serializer):
+        """Auto set user as author and link to current task"""
+        task_pk = self.kwargs['pk']
+        try:
+            task = Task.objects.get(pk=task_pk)
+            serializer.save(
+                task=task,
+                author=self.request.user
+            )
+        except Task.DoesNotExist:
+            raise ValidationError(f"Task with ID {task_pk} not found")

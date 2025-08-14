@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from app_task.models import Task
+from app_task.models import Task, TaskComment
 from app_board.models import Board
 from app_auth.api.serializers import UserInfoSerializer
 from django.contrib.auth import get_user_model
@@ -71,3 +71,10 @@ class TaskUpdateSerializer(TaskRetrieveSerializer):
         model = Task
         fields = ['title', 'description', 'assignee', 'reviewer',
                   'reviewer_id', 'assignee_id', 'due_date', 'priority', 'status']
+        
+class TaskCommentSerializer(serializers.ModelSerializer):
+    """ Fields Read Only """
+    author = serializers.StringRelatedField()
+    class Meta:
+        model = TaskComment
+        fields = ['id', 'created_at', 'author', 'content']
