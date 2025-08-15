@@ -1,6 +1,8 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import generics
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
-from .serializers import UserSerializer, RegistrationSerializer, UserDetailSerializer, LoginSerializer
+from .serializers import UserSerializer, RegistrationSerializer, UserDetailSerializer, LoginSerializer, EmailCheckSerializer
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAdminUser
@@ -61,3 +63,14 @@ class LoginView(APIView):
             }, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def email_check(request):
+    email = request.query_params.get('email') #get email from request in url
+    if not email:
+        return Response({"error": "Email required"}, status=400)
+    
+    user = get_object_or_404(User, email=email)
+    return Response({"id": user.id, "email": user.email, "fullname": user.fullname })
