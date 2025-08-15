@@ -67,7 +67,8 @@ class LoginView(APIView):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def email_check(request):
-    email = request.query_params.get('email') #get email from request in url
+    """ Function Based View for checking email availability in database """
+    email = request.query_params.get('email') # get email from request in url
     if not email:
         return Response({"error": "Email required"}, status=400)
     
