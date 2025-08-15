@@ -1,8 +1,7 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
-from .serializers import UserSerializer, RegistrationSerializer, UserDetailSerializer, LoginSerializer, EmailCheckSerializer
+from .serializers import UserSerializer, RegistrationSerializer, UserDetailSerializer, LoginSerializer
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAdminUser
@@ -72,5 +71,12 @@ def email_check(request):
     if not email:
         return Response({"error": "Email required"}, status=400)
     
-    user = get_object_or_404(User, email=email)
-    return Response({"id": user.id, "email": user.email, "fullname": user.fullname })
+    try:
+        user = User.objects.get(email=email)
+        return Response({
+            "id": user.id,
+            "email": user.email,
+            "fullname": user.fullname
+        })
+    except User.DoesNotExist:
+        return Response({"error": "Email not found"}, status=404)
