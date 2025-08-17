@@ -3,12 +3,12 @@ from app_task.models import Task, TaskComment
 from app_board.models import Board
 from app_auth.api.serializers import UserInfoSerializer
 from django.contrib.auth import get_user_model
-from .mixins import CommentCountMixin
+from .mixins import CommentCountMixin, TaskMemberValidationMixin
 
 User = get_user_model()
 
 
-class TaskSerializer(CommentCountMixin, serializers.ModelSerializer):
+class TaskSerializer(CommentCountMixin, TaskMemberValidationMixin, serializers.ModelSerializer):
     """ Fields Write Only """
     assignee_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
@@ -32,7 +32,6 @@ class TaskSerializer(CommentCountMixin, serializers.ModelSerializer):
         lookup_field='pk'
     )
     comments_count = serializers.SerializerMethodField()
-
     class Meta:
         model = Task
         fields = ['id','url','title','description','status','priority','assignee',
@@ -52,7 +51,7 @@ class TaskRetrieveSerializer(CommentCountMixin, serializers.ModelSerializer):
                   'reviewer', 'due_date', 'comments_count']
 
 
-class TaskUpdateSerializer(TaskRetrieveSerializer):
+class TaskUpdateSerializer(TaskMemberValidationMixin, TaskRetrieveSerializer):
     """ Fields Write Only """
     assignee_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
