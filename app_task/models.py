@@ -7,8 +7,27 @@ class Task(models.Model):
     title = models.CharField(max_length=25, unique=True, null=False, blank=False)
     description = models.TextField(max_length=250)
     board = models.ForeignKey(Board, related_name='tasks', on_delete=models.CASCADE)
-    assignee = models.ForeignKey(User, related_name='assigned_tasks', on_delete=models.CASCADE)
-    reviewer = models.ForeignKey(User, related_name='reviewing_tasks', on_delete=models.CASCADE)
+    assignee = models.ForeignKey(
+        User,
+        related_name='assigned_tasks',
+        on_delete=models.SET_NULL,  # User deleted -> field to null
+        null=True,
+        blank=True
+    )
+    reviewer = models.ForeignKey(
+        User,
+        related_name='reviewing_tasks',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    created_by = models.ForeignKey(
+        User,
+        related_name='created_tasks',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
     status = models.CharField(max_length=20, choices=[
         ('to-do', 'To Do'),
         ('in-progress', 'In Progress'),

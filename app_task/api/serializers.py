@@ -14,12 +14,14 @@ class TaskSerializer(CommentCountMixin, TaskMemberValidationMixin, serializers.M
         queryset=User.objects.all(),
         write_only=True,
         required=False,
+        allow_null=True,  
         source='assignee'
     )
     reviewer_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
         write_only=True,
         required=False,
+        allow_null=True,  
         source='reviewer'
     )
     board = serializers.PrimaryKeyRelatedField(
@@ -48,7 +50,7 @@ class TaskRetrieveSerializer(CommentCountMixin, serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = ['id', 'title', 'description', 'status', 'priority', 'assignee',
-                  'reviewer', 'due_date', 'comments_count']
+                  'reviewer', 'due_date', 'comments_count', 'created_by']
 
 
 class TaskUpdateSerializer(TaskMemberValidationMixin, TaskRetrieveSerializer):
@@ -57,12 +59,14 @@ class TaskUpdateSerializer(TaskMemberValidationMixin, TaskRetrieveSerializer):
         queryset=User.objects.all(),
         write_only=True,
         required=False,
+        allow_null=True,  
         source='assignee'
     )
     reviewer_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
         write_only=True,
         required=False,
+        allow_null=True,  
         source='reviewer'
     )
 
