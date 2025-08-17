@@ -5,7 +5,7 @@ class IsOwner(permissions.BasePermission):
     Permission if user is object owner
     """
     def has_object_permission(self, request, view, obj):
-        is_owner = bool(request.user) and request.user == obj.owner
+        is_owner = bool(request.user) and request.user == obj.owner_id
         return is_owner
     
 class IsOwnerOrMember(permissions.BasePermission):
@@ -16,7 +16,7 @@ class IsOwnerOrMember(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         """ Defined user roles """
         is_member = bool(request.user) and request.user in obj.members.all()
-        is_owner = bool(request.user) and request.user == obj.owner
+        is_owner = bool(request.user) and request.user == obj.owner_id
         is_admin = request.user.is_superuser
 
         if request.method == "DELETE":

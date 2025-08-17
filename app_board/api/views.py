@@ -12,7 +12,7 @@ class BoardList(generics.ListCreateAPIView):
         """
         set current logged user as owner
         """
-        serializer.save(owner=self.request.user)
+        serializer.save(owner_id=self.request.user)
 
     def get_queryset(self):
         """
@@ -20,7 +20,7 @@ class BoardList(generics.ListCreateAPIView):
         Does User own board or is he member of board?
         """
         user = self.request.user
-        owned_boards = Board.objects.filter(owner=user)
+        owned_boards = Board.objects.filter(owner_id=user)
         member_boards = Board.objects.filter(members=user) 
         return owned_boards.union(member_boards) # Union of both queries, no duplicates
 
