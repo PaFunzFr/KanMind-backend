@@ -43,11 +43,13 @@ Username is not used at all.
 class CustomUser(AbstractUser):
     username = None  # delete username field out of db
     email = models.EmailField(unique=True)
-    first_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
+    fullname = models.CharField(max_length=150)
+    # first_name = models.CharField(max_length=150)
+    # last_name = models.CharField(max_length=150)
 
     USERNAME_FIELD = 'email'  # login with email
-    REQUIRED_FIELDS = ['first_name', 'last_name']
+    REQUIRED_FIELDS = ['fullname']
+    # REQUIRED_FIELDS = ['first_name', 'last_name']
 
     objects = CustomUserManager()
 
@@ -55,9 +57,9 @@ class CustomUser(AbstractUser):
         verbose_name = "User"
         verbose_name_plural = "Users"
 
-    @property
-    def fullname(self):
-        return f"{self.first_name} {self.last_name}"
+    # @property
+    # def fullname(self):
+    #     return f"{self.first_name} {self.last_name}"
 
     def __str__(self):
         return self.fullname

@@ -30,7 +30,7 @@ class BoardSerializer(serializers.ModelSerializer):
         fields = ['id','url','title','member_count','ticket_count','tasks_to_do_count',
                   'tasks_high_prio_count','owner_id','members'
                 ]
-        read_only_fields = ['id', 'created_at', 'owner_id']
+        read_only_fields = ['id', 'created_at', 'owner']
         write_only_fields = ['members']
 
     def get_member_count(self, obj):
@@ -56,11 +56,11 @@ class BoardRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Board
-        fields = ['id', 'title', 'owner_id', 'members', 'tasks']
+        fields = ['id', 'title', 'owner', 'members', 'tasks']
 
 
 class BoardUpdateSerializer(serializers.ModelSerializer):
-    owner_data = UserInfoSerializer(read_only=True, source='owner_id')
+    owner_data = UserInfoSerializer(read_only=True, source='owner')
     members_data = UserInfoSerializer(many=True, read_only=True, source='members')
     members = serializers.PrimaryKeyRelatedField(
         many=True,

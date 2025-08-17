@@ -13,8 +13,8 @@ class CustomUserAdmin(auth_admin.UserAdmin):
     """
     # Fields for the edit and detail view of the CustomUser model.
     fieldsets = (
-        (None, {"fields": ("email", "password")}),
-        ("Personal info", {"fields": ("first_name", "last_name")}),
+        ("Login Details", {"fields": ("email", "password")}),
+        ("Personal info", {"fields": ("fullname",)}),
         (
             "Permissions",
             {
@@ -36,16 +36,16 @@ class CustomUserAdmin(auth_admin.UserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("email", "first_name", "last_name", "password", "password2"),
+                "fields": ("email", "fullname", "password", "password2"),
             },
         ),
     )
     
     # Displayed fields in the list view
-    list_display = ["email", "first_name", "last_name", "is_staff"]
+    list_display = ["email", "fullname", "is_staff"]
     
     # Fields you can search by
-    search_fields = ["email", "first_name", "last_name"]
+    search_fields = ["email", "fullname"]
     
     # Sorting standard
     ordering = ["email"]

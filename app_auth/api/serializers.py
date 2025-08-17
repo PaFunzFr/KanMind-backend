@@ -11,7 +11,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User # used Model (overwritten) => CustomUser => path(.... name='customuser-detail') not user-detail
-        fields = ['id', 'first_name', 'last_name', 'email']
+        fields = ['id', 'fullname', 'email']
+        # fields = ['id', 'first_name', 'last_name', 'email']
 
 class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,18 +24,19 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'fullname', 'email', 'password', 'repeated_password']
+        # fields = ['first_name', 'last_name', 'fullname', 'email', 'password', 'repeated_password']
+        fields = ['fullname', 'email', 'password', 'repeated_password']
         extra_kwargs = {
             'password': {'write_only': True}, # password write-only
-            'first_name': {'write_only': True},
-            'last_name': {'write_only': True},
+            'fullname': {'write_only': True},
+            # 'first_name': {'write_only': True},
+            # 'last_name': {'write_only': True},
         }
 
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
             raise serializers.ValidationError("Email already exists")
         return value
-    
     
     def save(self):
         pw = self.validated_data['password']
@@ -44,8 +46,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
         account = User(
             email = self.validated_data['email'],
-            first_name=self.validated_data['first_name'],
-            last_name=self.validated_data['last_name']
+            fullname = self.validated_data['fullname'],
+            # first_name=self.validated_data['first_name'],
+            # last_name=self.validated_data['last_name']
         )
 
         account.set_password(pw)
@@ -74,4 +77,3 @@ class LoginSerializer(serializers.Serializer):
             return data
         else:
             raise serializers.ValidationError("Must include email and password")
-        
