@@ -35,3 +35,27 @@ class CommentList(generics.ListCreateAPIView):
             )
         except Task.DoesNotExist:
             raise ValidationError(f"Task with ID {task_pk} not found")
+        
+class AssignedTasksList(generics.ListAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskRetrieveSerializer
+
+    def get_queryset(self):
+        """
+        Filter tasks by current logged user and its assigned tasks
+        """
+        user = self.request.user
+        assigned_tasks = Task.objects.filter(assignee=user)
+        return assigned_tasks
+
+class ReviewTasksList(generics.ListAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskRetrieveSerializer
+
+    def get_queryset(self):
+        """
+        Filter tasks by current logged user and its reviewed tasks
+        """
+        user = self.request.user
+        reviewed_tasks = Task.objects.filter(reviewer=user) 
+        return reviewed_tasks
