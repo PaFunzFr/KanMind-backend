@@ -26,10 +26,11 @@ class TaskMemberValidationMixin:
         reviewer = data.get('reviewer') or getattr(self.instance, 'reviewer', None)
         board = data.get('board') or getattr(self.instance, 'board', None)
 
-        if board and assignee and assignee not in board.members.all():
-            raise serializers.ValidationError("Assignee must be a member of the board")
+        if board:
+            if assignee is not None and (assignee not in board.members.all()):
+                raise serializers.ValidationError("Assignee must be a member of the board")
 
-        if board and reviewer and reviewer not in board.members.all():
-            raise serializers.ValidationError("Reviewer must be a member of the board")
+            if reviewer is not None and (reviewer not in board.members.all()):
+                raise serializers.ValidationError("Reviewer must be a member of the board")
 
         return data
