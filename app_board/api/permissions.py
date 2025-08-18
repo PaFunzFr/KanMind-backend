@@ -15,7 +15,7 @@ class IsOwnerOrMember(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         """ Defined user roles """
-        is_member = bool(request.user) and request.user in obj.members.all()
+        is_member = bool(request.user) and obj.members.filter(pk=request.user.pk).exists()
         is_owner = bool(request.user) and request.user == obj.owner_id
         is_admin = request.user.is_superuser
 
