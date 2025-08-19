@@ -23,5 +23,5 @@ class IsOwnerOrMember(permissions.BasePermission):
             """ only owner or admin can delete """
             return is_owner or is_admin
         else:
-            """ only member, owner or admin can update """
+            """ only member, owner or admin can update, read"""
             return is_member or is_owner or is_admin

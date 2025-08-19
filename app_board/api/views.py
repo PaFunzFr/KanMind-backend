@@ -6,7 +6,7 @@ from .serializers import BoardSerializer, BoardUpdateSerializer, BoardRetrieveSe
 
 class BoardList(generics.ListCreateAPIView):
     serializer_class = BoardSerializer
-    permission_classes = [IsAuthenticated, IsOwnerOrMember]
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         """
@@ -21,12 +21,16 @@ class BoardList(generics.ListCreateAPIView):
         """
         user = self.request.user
         owned_boards = Board.objects.filter(owner_id=user)
-        member_boards = Board.objects.filter(members=user) 
-        return owned_boards.union(member_boards) # Union of both queries, no duplicates
+        member_boards = Board.objects.filter(members=user)
+        if user.is_superuser:
+            return Board.objects.all()
+        else:
+            return owned_boards.union(member_boards) # Union of both queries, no duplicates
 
 class BoardDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Board.objects.all()
     permission_classes = [IsAuthenticated, IsOwnerOrMember]
+
     def get_serializer_class(self):
         """
         Chosen serializer class depends on the HTTP method.

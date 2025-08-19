@@ -1,14 +1,13 @@
 from rest_framework import permissions
 from app_board.models import Board
+from app_task.models import Task
 
-class CanCreateTaskIfBoardMember(permissions.BasePermission):
+class IsBoardMember(permissions.BasePermission):
     def has_permission(self, request, view):
-        if request.method != "POST":
+        if request.method == "POST":
+            return Board.objects.filter(pk=request.data.get("board"),members=request.user).exists()
+        else:
             return True
-        return (
-            request.user.is_authenticated
-            and Board.objects.filter(pk=request.data.get("board"), members=request.user).exists()
-        )
 
 class IsCreatorOrBoardMember(permissions.BasePermission):
     """
@@ -29,3 +28,7 @@ class IsCreatorOrBoardMember(permissions.BasePermission):
         else:
             """ only member, owner or admin can update """
             return is_member or is_creator or is_owner or is_admin
+        
+class IsBoardMemberOfTask(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return Task.objects.filter(pk=request.data.get("task"),board__members=request.user).exists()
