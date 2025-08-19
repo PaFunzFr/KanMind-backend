@@ -32,3 +32,13 @@ class IsCreatorOrBoardMember(permissions.BasePermission):
 class IsBoardMemberOfTask(permissions.BasePermission):
     def has_permission(self, request, view):
         return Task.objects.filter(pk=request.data.get("task"),board__members=request.user).exists()
+
+class IsCommentOwner(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        is_user = request.user
+        is_author = obj.author
+        is_admin = is_user.is_superuser
+        if (is_user == is_author) or is_admin:
+            return True
+        else:
+            return False

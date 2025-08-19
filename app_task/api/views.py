@@ -2,8 +2,7 @@ from django.forms import ValidationError
 from rest_framework import generics
 from app_task.models import Task, TaskComment
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import PermissionDenied
-from .permissions import IsCreatorOrBoardMember, IsBoardMember, IsBoardMemberOfTask
+from .permissions import IsCreatorOrBoardMember, IsCommentOwner
 from .serializers import TaskSerializer, TaskRetrieveSerializer, TaskUpdateSerializer, TaskCommentSerializer
 
 class TaskList(generics.ListCreateAPIView):
@@ -12,14 +11,16 @@ class TaskList(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        """
-        set current logged user as creator
-        """
+
         user = self.request.user
         board = serializer.validated_data.get("board")
+
+        """ not allowed to create tasks if not member of its board """
         if not board or not board.members.filter(pk=user.pk).exists():
                 from rest_framework.exceptions import PermissionDenied
                 raise PermissionDenied("You must be a member of the selected board to create a task.")
+    
+        """ set current logged user as creator """
         serializer.save(created_by=self.request.user)
 
     def get_queryset(self):
@@ -46,11 +47,16 @@ class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class CommentList(generics.ListCreateAPIView):
     serializer_class = TaskCommentSerializer
-    permission_classes = [IsAuthenticated, IsBoardMemberOfTask]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        task_pk = self.kwargs['pk_task']  # Task-ID from URL (int:pk_task)
-        return TaskComment.objects.filter(task=task_pk)
+        user = self.request.user
+        task_pk = self.kwargs['pk_task']
+        is_member = Task.objects.filter(pk=task_pk, board__members=user).exists()
+        if not is_member and not user.is_superuser:
+            return TaskComment.objects.none()
+        return TaskComment.objects.filter(task_id=task_pk).order_by('-created_at')
+
 
     def perform_create(self, serializer):
         """Auto set user as author and link to current task"""
@@ -88,3 +94,11 @@ class ReviewTasksList(generics.ListAPIView):
         user = self.request.user
         reviewed_tasks = Task.objects.filter(reviewer=user) 
         return reviewed_tasks
+
+class DeleteComment(generics.RetrieveDestroyAPIView):
+    permission_classes = [IsAuthenticated, IsCommentOwner]
+    serializer_class = TaskCommentSerializer
+    lookup_url_kwarg = 'pk_comment' # set object to delete
+
+    def get_queryset(self):
+        return TaskComment.objects.filter(task_id=self.kwargs['pk_task'])
