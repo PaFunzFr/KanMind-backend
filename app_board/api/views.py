@@ -10,9 +10,11 @@ class BoardList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         """
-        set current logged user as owner
+        set current logged user as owner and first member, if no members are set
         """
-        serializer.save(owner_id=self.request.user)
+        members = serializer.validated_data.get('members', [])
+        members.append(self.request.user.id) 
+        serializer.save(owner_id=self.request.user, members=members)
 
     def get_queryset(self):
         """
