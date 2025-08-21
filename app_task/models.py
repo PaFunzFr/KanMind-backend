@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from app_board.models import Board
+import datetime
 
 class Task(models.Model):
     title = models.CharField(max_length=35, unique=True, null=False, blank=False)
@@ -41,7 +42,7 @@ class Task(models.Model):
         ('medium', 'Medium'),
         ('high', 'High'),
     ], default ='medium')
-    due_date = models.DateField(null=True, blank=True)
+    due_date = models.DateField(default=datetime.date.today)
     created_at = models.DateTimeField(auto_now_add=True )
     updated_at = models.DateTimeField(auto_now=True)
 
