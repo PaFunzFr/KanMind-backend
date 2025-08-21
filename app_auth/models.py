@@ -34,13 +34,14 @@ class CustomUserManager(BaseUserManager):
         # create user and save to db
         return self.create_user(email, password, **extra_fields)
 
-"""
-Custom User that uses the email as the username field 
-instead of the default username field.
-Email is unique identifier.
-Username is not used at all.
-"""
+
 class CustomUser(AbstractUser):
+    """
+    Custom User that uses the email as the username field 
+    instead of the default username field.
+    Email is unique identifier.
+    Username is not used at all.
+    """
     username = None  # delete username field out of db
     email = models.EmailField(unique=True)
     fullname = models.CharField(max_length=150)
