@@ -75,7 +75,7 @@ class RegistrationView(APIView):
                     "token": "<token>",
                     "fullname": "<name>",
                     "email": "<email>",
-                    "id": <int>
+                    "user_id": <int>
                 }
             400: Validation errors (e.g., duplicate email, password mismatch)
 
@@ -95,7 +95,7 @@ class RegistrationView(APIView):
                 'token':token.key,
                 'fullname': saved_account.fullname,
                 'email':saved_account.email,
-                'id': saved_account.pk
+                'user_id': saved_account.pk
             }
             return Response(data, status=status.HTTP_201_CREATED)
         else:
