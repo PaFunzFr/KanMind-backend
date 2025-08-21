@@ -1,78 +1,76 @@
 # Kanban Board Backend Project
 
-Dies ist das Backend für eine Django REST API Anwendung.
-Das Projekt basiert auf Django und Django REST Framework und nutzt eine klassische App‑Struktur (z.B. app_auth, app_board, app_task).
-Mit dieser API kannst du Benutzerauthentifizierung, Boards und Aufgaben verwalten.
+This is the backend for a Django REST API application.  
+The project is based on Django and Django REST Framework and uses a classic app structure (e.g. app_auth, app_board, app_task).  
+With this API you can manage user authentication, boards, and tasks.  
 
 ---
 
-## Projektstruktur
+## Project Structure
 
-> backend/. 
-> ├── app_auth/<br>
-> ├── app_board/<br>
-> ├── app_task/<br>
-> ├── core/<br>
-> ├── env/                  # lokale virtuelle Umgebung (ignored)<br>
-> ├── manage.py<br>
-> ├── requirements.txt<br>
-> └── .gitignore<br>
+> backend/.  
+> ├── app_auth/<br>  
+> ├── app_board/<br>  
+> ├── app_task/<br>  
+> ├── core/<br>  
+> ├── env/                  # local virtual environment (ignored)<br>  
+> ├── manage.py<br>  
+> ├── requirements.txt<br>  
+> └── .gitignore<br>  
 
 ---
 
-## ⚙️ Voraussetzungen
+## ⚙️ Requirements
 
-- **Python 3.8+**
-- **pip**
-- Optional: **virtualenv**
+- **Python 3.8+**  
+- **pip**  
+- Optional: **virtualenv**  
 
 ---
 
 ## 🚀 Installation
 
-1. **Repository klonen**
-git clone https://github.com/<dein-benutzername>/<repo-name>.git
-cd <repo-name>
+1. **Clone the repository**  
+git clone https://github.com/<your-username>/<repo-name>.git  
+cd <repo-name>  
 
+2. **Create a virtual environment**  
+python -m venv env  
+source env/bin/activate   # Windows: env\Scripts\activate  
 
-2. **Virtuelle Umgebung erstellen**
-python -m venv env
-source env/bin/activate # Windows: env\Scripts\activate
+3. **Install dependencies**  
+pip install -r requirements.txt  
 
-3. **Abhängigkeiten installieren**
-pip install -r requirements.txt
+4. **Run migrations**  
+python manage.py migrate  
 
-4. **Migrationen durchführen**
-python manage.py migrate
+5. **Create a superuser for the admin**  
+python manage.py createsuperuser  
 
-5. **Superuser für Admin erstellen**
-python manage.py createsuperuser
+6. **Start the server**  
+python manage.py runserver  
 
-6. **Server starten**
-python manage.py runserver
-
-
-> **Hinweis:**  
-> Standardmäßig läuft der Server unter [http://127.0.0.1:8000/](http://127.0.0.1:8000/)  
-> Passe `core/settings.py` für Datenbanken, `DEBUG`, und `ALLOWED_HOSTS` an.
+> **Note:**  
+> By default, the server runs at [http://127.0.0.1:8000/](http://127.0.0.1:8000/)  
+> Adjust `core/settings.py` for databases, `DEBUG`, and `ALLOWED_HOSTS` as needed.  
 
 ---
 
-## 📦 Abhängigkeiten (`requirements.txt`)
+## 📦 Dependencies (`requirements.txt`)
 
-- `Django`
-- `djangorestframework`
-
----
-
-## 🔒 Sicherheit
-
-- Achte darauf, dass `.env` Dateien **nicht** im Repo landen (siehe `.gitignore`)
-- Keine Datenbankdateien (`*.sqlite3`) ins Repo pushen.
-- Für geheime Schlüssel und Passwörter ausschließlich `.env` verwenden.
+- `Django`  
+- `djangorestframework`  
 
 ---
 
-## 📝 Lizenz
+## 🔒 Security
 
-MIT License – siehe [LICENSE](LICENSE)
+- Make sure `.env` files are **not** pushed to the repo (see `.gitignore`).  
+- Do not commit database files (`*.sqlite3`).  
+- Use `.env` exclusively for secret keys and passwords.  
+
+---
+
+## 📝 License
+
+MIT License – see [LICENSE](LICENSE)  
