@@ -4,8 +4,8 @@ User = get_user_model()
 from app_board.models import Board
 
 class Task(models.Model):
-    title = models.CharField(max_length=25, unique=True, null=False, blank=False)
-    description = models.TextField(max_length=250)
+    title = models.CharField(max_length=35, unique=True, null=False, blank=False)
+    description = models.TextField(max_length=250, null=False, blank=False)
     board = models.ForeignKey(Board, related_name='tasks', on_delete=models.CASCADE)
     assignee = models.ForeignKey(
         User,
@@ -29,12 +29,14 @@ class Task(models.Model):
         blank=True
     )
     status = models.CharField(max_length=20, choices=[
+        # (value, label)
         ('to-do', 'To Do'),
         ('in-progress', 'In Progress'),
         ('review', 'Reviewing'),
         ('done', 'Done'),
-    ], default='todo')
+    ], default='to-do')
     priority = models.CharField(max_length=20, choices=[
+        # (value, label)
         ('low', 'Low'),
         ('medium', 'Medium'),
         ('high', 'High'),
