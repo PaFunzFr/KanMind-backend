@@ -1,11 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth import admin as auth_admin
 from .models import CustomUser
+from app_board.models import Board
+from app_task.models import Task, TaskComment
 
 # Clean the admin interface by removing the default registration form
 # could be needed in some configurations
 # admin.site.unregister(User)
-
 @admin.register(CustomUser)
 class CustomUserAdmin(auth_admin.UserAdmin):
     """
@@ -49,3 +50,21 @@ class CustomUserAdmin(auth_admin.UserAdmin):
     
     # Sorting standard
     ordering = ["email"]
+
+@admin.register(Board)
+class BoardAdmin(admin.ModelAdmin):
+    list_display = ("id", "title")
+    search_fields = ("title",)
+    ordering = ("id",)
+
+@admin.register(Task)
+class TaskAdmin(admin.ModelAdmin):
+    list_display = ("id", "title", "description", "status", "priority", "assignee", "reviewer", "due_date", "created_at", "updated_at")
+    search_fields = ("title",)
+    ordering = ("id",)
+
+@admin.register(TaskComment)
+class TaskCommentAdmin(admin.ModelAdmin):
+    list_display = ("id", "author", "task", "content")
+    search_fields = ("author",)
+    ordering = ("id",)
