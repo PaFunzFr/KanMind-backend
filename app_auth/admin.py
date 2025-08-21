@@ -53,9 +53,13 @@ class CustomUserAdmin(auth_admin.UserAdmin):
 
 @admin.register(Board)
 class BoardAdmin(admin.ModelAdmin):
-    list_display = ("id", "title")
+    list_display = ("id", "title", "members_count")
     search_fields = ("title",)
     ordering = ("id",)
+
+    @admin.display(description="Members Count")
+    def members_count(self, obj: Board) -> int:
+        return obj.members.count()
 
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
