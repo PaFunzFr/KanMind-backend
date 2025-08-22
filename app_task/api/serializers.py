@@ -72,12 +72,15 @@ class TaskSerializer(CommentCountMixin, TaskMemberValidationMixin, serializers.M
         view_name='task-detail',
         lookup_field='pk'
     )
+    assignee = UserInfoSerializer(read_only=True)
+    reviewer = UserInfoSerializer(read_only=True)
     comments_count = serializers.SerializerMethodField()
     class Meta:
         model = Task
-        fields = ['id','url','title','description','status','priority','assignee',
-                  'reviewer','due_date','comments_count','assignee_id','reviewer_id','board',]
+        fields = ['id','url','board','title','description','status','priority','assignee',
+                  'reviewer','due_date','comments_count','assignee_id','reviewer_id']
         read_only_fields = ['id', 'assignee', 'reviewer', 'comments_count']
+
 
 
 class TaskRetrieveSerializer(CommentCountMixin, serializers.ModelSerializer):
@@ -133,8 +136,9 @@ class TaskUpdateSerializer(TaskMemberValidationMixin, TaskRetrieveSerializer):
 
     class Meta:
         model = Task
-        fields = ['title', 'description', 'assignee', 'reviewer',
+        fields = ['id','title', 'description', 'assignee', 'reviewer',
                   'reviewer_id', 'assignee_id', 'due_date', 'priority', 'status']
+        read_only_fields = ['id']
         
 class TaskCommentSerializer(serializers.ModelSerializer):
     """

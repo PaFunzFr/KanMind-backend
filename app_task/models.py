@@ -34,7 +34,7 @@ from app_board.models import Board
 import datetime
 
 class Task(models.Model):
-    title = models.CharField(max_length=35, unique=True, null=False, blank=False)
+    title = models.CharField(max_length=35, unique=False, null=False, blank=False)
     description = models.TextField(max_length=250, null=False, blank=False)
     board = models.ForeignKey(Board, related_name='tasks', on_delete=models.CASCADE)
     assignee = models.ForeignKey(
