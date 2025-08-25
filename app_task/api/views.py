@@ -6,7 +6,7 @@ Conventions:
 - Enforces authentication and object-level permissions where appropriate.
 - Selects serializers per action to separate write vs read concerns.
 """
-from django.forms import ValidationError
+from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from app_task.models import Task, TaskComment
 from rest_framework.permissions import IsAuthenticated
@@ -128,14 +128,15 @@ class CommentList(generics.ListCreateAPIView):
         Auto-assign the current user as author and associate with the URL task.
         """
         task_pk = self.kwargs['pk_task']
-        try:
-            task = Task.objects.get(pk=task_pk)
-            serializer.save(
-                task=task,
-                author=self.request.user
-            )
-        except Task.DoesNotExist:
-            raise ValidationError(f"Task with ID {task_pk} not found")
+        task = get_object_or_404(Task, pk=task_pk)
+
+        user = self.request.user
+        is_member = task.board.members.filter(pk=user.pk).exists()
+        if not (is_member or user.is_superuser):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("You are not allowed to comment on this task.")
+
+        serializer.save(task=task, author=self.request.user)
 
 
 class AssignedTasksList(generics.ListAPIView):
