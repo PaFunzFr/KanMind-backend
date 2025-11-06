@@ -1,0 +1,10 @@
+version: '3.9'
+
+services:
+  coderr_web:
+    build: .
+    image: kanmind:latest
+    container_name: kanmind_web
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
