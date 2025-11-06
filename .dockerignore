@@ -1,0 +1,98 @@
+# ### macOS ###
+# .DS_Store
+# .AppleDouble
+# .LSOverride
+# Icon
+# ._*
+# .DocumentRevisions-V100
+# .fseventsd
+# .Spotlight-V100
+# .TemporaryItems
+# .Trashes
+# .VolumeIcon.icns
+# .com.apple.timemachine.donotpresent
+# .AppleDB
+# .AppleDesktop
+# Network Trash Folder
+# Temporary Items
+# .apdisk
+# *.icloud
+
+# ### Python / Django ###
+# # Byte-compiled / optimized / DLL files
+# __pycache__/
+# *.py[cod]
+# *$py.class
+
+# # Virtual environments
+venv/
+.env/
+.venv/
+env/
+
+# # SQLite databases (local development, not production)
+# *.sqlite3
+# db.sqlite3
+
+# # Django migrations cache
+# */migrations/__pycache__/
+# */migrations/*.pyc
+# */migrations/*.pyo
+# */migrations/*.py~
+
+# # Logs
+# *.log
+
+# # Coverage & test results
+# htmlcov/
+# .coverage
+# .tox/
+# .nox/
+# .cache/
+# .pytest_cache/
+# nosetests.xml
+# coverage.xml
+# *.cover
+
+# # Linting & type checking
+# .mypy_cache/
+# .dmypy.json
+# .pyre/
+# ruff_cache/
+# .pytype/
+
+# ### IDEs ###
+# .vscode/
+# .idea/
+
+# ### Static & media files ###
+# # (in Docker-Production with collectstatic / handle volumes)
+# static/
+# staticfiles/
+# media/
+
+# ### Build & distribution ###
+# build/
+# develop-eggs/
+# dist/
+# downloads/
+# eggs/
+# .eggs/
+# lib/
+# lib64/
+# parts/
+# sdist/
+# var/
+# *.egg-info/
+# .installed.cfg
+# *.egg
+
+# ### Pip ###
+# pip-log.txt
+# pip-delete-this-directory.txt
+
+# ### Local backup files ###
+# *~
+# *.swp
+# *.bak
+# *.tmp
