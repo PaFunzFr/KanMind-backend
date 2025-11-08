@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'app_auth',
     'app_board',
     'app_task',
-    'drf-spectacular'
+    'drf_spectacular'
 ]
 
 MIDDLEWARE = [
