@@ -14,6 +14,18 @@ from app_board.models import Board
 from app_task.models import Task
 from .serializers import BoardSerializer, BoardUpdateSerializer, BoardRetrieveSerializer
 
+from drf_spectacular.utils import extend_schema, OpenApiResponse
+
+@extend_schema(
+    description="List all boards visible to the authenticated user or create a new board.",
+    request=BoardSerializer,
+    responses={
+        200: OpenApiResponse(response=BoardSerializer, description="List of boards retrieved successfully."),
+        201: OpenApiResponse(response=BoardSerializer, description="Board created successfully."),
+        400: OpenApiResponse(description="Invalid input data."),
+        401: OpenApiResponse(description="Authentication credentials were not provided or are invalid."),
+    }
+)
 class BoardList(generics.ListCreateAPIView):
     """
     List boards visible to the current user or create a new board.
@@ -57,6 +69,19 @@ class BoardList(generics.ListCreateAPIView):
         # Union of both queries, no duplicates
         return owned_boards.union(member_boards) 
 
+
+@extend_schema(
+    description="Retrieve, update, or delete a specific board (requires ownership or membership).",
+    request=BoardUpdateSerializer,
+    responses={
+        200: OpenApiResponse(response=BoardRetrieveSerializer, description="Board details retrieved or updated successfully."),
+        204: OpenApiResponse(description="Board deleted successfully."),
+        400: OpenApiResponse(description="Invalid request data."),
+        401: OpenApiResponse(description="Authentication required."),
+        403: OpenApiResponse(description="Permission denied (not owner or member)."),
+        404: OpenApiResponse(description="Board not found."),
+    }
+)
 class BoardDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Retrieve, update, or delete a board.
@@ -108,7 +133,6 @@ class BoardDetail(generics.RetrieveUpdateDestroyAPIView):
             - Uses efficient bulk updates for Task to avoid per-instance saves.
         """
 
-        
         board = self.get_object()
 
         # Snapshot old members (as IDs)

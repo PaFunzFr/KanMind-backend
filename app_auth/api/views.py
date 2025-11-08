@@ -21,10 +21,18 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework.authtoken.views import ObtainAuthToken
+
+from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiParameter
 
 User = get_user_model()
 
+@extend_schema(
+    description="List all registered users. Admins can view all users.",
+    responses={
+        200: OpenApiResponse(response=UserSerializer, description="List of users retrieved successfully."),
+        403: OpenApiResponse(description="Permission denied."),
+    }
+)
 class UserProfileList(generics.ListAPIView):
     """
     List users.
@@ -38,6 +46,18 @@ class UserProfileList(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+
+@extend_schema(
+    description="Retrieve, update, or delete a specific user profile (admin-only).",
+    request=UserDetailSerializer,
+    responses={
+        200: OpenApiResponse(response=UserDetailSerializer, description="User details retrieved successfully."),
+        204: OpenApiResponse(description="User deleted successfully."),
+        400: OpenApiResponse(description="Invalid request data."),
+        403: OpenApiResponse(description="Permission denied."),
+        404: OpenApiResponse(description="User not found."),
+    }
+)
 class UserProfileDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Retrieve, update, or delete a user (admin-only).
@@ -58,6 +78,15 @@ class UserProfileDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserDetailSerializer
     permission_classes = [IsAdminUser]
 
+
+@extend_schema(
+    description="Register a new user and return an authentication token.",
+    request=RegistrationSerializer,
+    responses={
+        201: OpenApiResponse(description="User created successfully with token."),
+        400: OpenApiResponse(description="Invalid registration data (e.g., duplicate email, password mismatch)."),
+    }
+)
 class RegistrationView(APIView):
     """
     Register a new user and issue an auth token.
@@ -100,7 +129,16 @@ class RegistrationView(APIView):
             return Response(data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+
+@extend_schema(
+    description="Authenticate user credentials and return an authentication token with user info.",
+    request=LoginSerializer,
+    responses={
+        200: OpenApiResponse(description="Login successful, token returned."),
+        400: OpenApiResponse(description="Invalid credentials or validation error."),
+    }
+)
 class LoginView(APIView):
     """
     Authenticate a user and return an auth token with basic profile info.
@@ -146,6 +184,17 @@ class LoginView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(
+    description="Check whether a given email address exists in the system.",
+    parameters=[
+        OpenApiParameter(name="email", description="Email address to check", required=True, type=str)
+    ],
+    responses={
+        200: OpenApiResponse(description="Email found in the system."),
+        400: OpenApiResponse(description="Missing or invalid email parameter."),
+        404: OpenApiResponse(description="Email not found."),
+    }
+)
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def email_check(request):

@@ -13,6 +13,19 @@ from rest_framework.permissions import IsAuthenticated
 from .permissions import IsCreatorOrBoardMember, IsCommentOwner
 from .serializers import TaskSerializer, TaskRetrieveSerializer, TaskUpdateSerializer, TaskCommentSerializer
 
+from drf_spectacular.utils import extend_schema, OpenApiResponse
+
+@extend_schema(
+    description="List tasks visible to the authenticated user or create a new task within a board.",
+    request=TaskSerializer,
+    responses={
+        200: OpenApiResponse(response=TaskSerializer, description="Tasks listed successfully."),
+        201: OpenApiResponse(response=TaskSerializer, description="Task created successfully."),
+        400: OpenApiResponse(description="Invalid input or missing board."),
+        401: OpenApiResponse(description="Authentication credentials not provided or invalid."),
+        403: OpenApiResponse(description="User is not a member of the selected board."),
+    }
+)
 class TaskList(generics.ListCreateAPIView):
     """
     List tasks visible to the user or create a new task.
@@ -61,6 +74,18 @@ class TaskList(generics.ListCreateAPIView):
             return Task.objects.filter(board__members=user)
 
 
+@extend_schema(
+    description="Retrieve, update, or delete a single task. Requires creator, board owner, or admin rights.",
+    request=TaskUpdateSerializer,
+    responses={
+        200: OpenApiResponse(response=TaskRetrieveSerializer, description="Task retrieved or updated successfully."),
+        204: OpenApiResponse(description="Task deleted successfully."),
+        400: OpenApiResponse(description="Invalid task data."),
+        401: OpenApiResponse(description="Authentication required."),
+        403: OpenApiResponse(description="Permission denied (not creator or board member)."),
+        404: OpenApiResponse(description="Task not found."),
+    }
+)
 class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Retrieve, update, or delete a single task.
@@ -93,6 +118,18 @@ class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
         return TaskRetrieveSerializer # Default => GET
 
 
+@extend_schema(
+    description="List or create comments for a specific task. Only available to members of the task’s board or admins.",
+    request=TaskCommentSerializer,
+    responses={
+        200: OpenApiResponse(response=TaskCommentSerializer, description="Comments retrieved successfully."),
+        201: OpenApiResponse(response=TaskCommentSerializer, description="Comment created successfully."),
+        400: OpenApiResponse(description="Invalid comment data."),
+        401: OpenApiResponse(description="Authentication required."),
+        403: OpenApiResponse(description="User is not a member of the task’s board."),
+        404: OpenApiResponse(description="Task not found."),
+    }
+)
 class CommentList(generics.ListCreateAPIView):
     """
     List or create comments for a specific task.
@@ -139,6 +176,13 @@ class CommentList(generics.ListCreateAPIView):
         serializer.save(task=task, author=self.request.user)
 
 
+@extend_schema(
+    description="List tasks assigned to the current authenticated user.",
+    responses={
+        200: OpenApiResponse(response=TaskRetrieveSerializer, description="Assigned tasks retrieved successfully."),
+        401: OpenApiResponse(description="Authentication required."),
+    }
+)
 class AssignedTasksList(generics.ListAPIView):
     """
     List tasks assigned to the current user.
@@ -157,6 +201,14 @@ class AssignedTasksList(generics.ListAPIView):
         assigned_tasks = Task.objects.filter(assignee=user)
         return assigned_tasks
 
+
+@extend_schema(
+    description="List tasks where the current user is the reviewer.",
+    responses={
+        200: OpenApiResponse(response=TaskRetrieveSerializer, description="Review tasks retrieved successfully."),
+        401: OpenApiResponse(description="Authentication required."),
+    }
+)
 class ReviewTasksList(generics.ListAPIView):
     """
     List tasks the current user is reviewing.
@@ -175,6 +227,17 @@ class ReviewTasksList(generics.ListAPIView):
         reviewed_tasks = Task.objects.filter(reviewer=user) 
         return reviewed_tasks
 
+
+@extend_schema(
+    description="Retrieve or delete a specific comment belonging to a task. Restricted to comment author or admins.",
+    responses={
+        200: OpenApiResponse(response=TaskCommentSerializer, description="Comment retrieved successfully."),
+        204: OpenApiResponse(description="Comment deleted successfully."),
+        401: OpenApiResponse(description="Authentication required."),
+        403: OpenApiResponse(description="Permission denied (not comment author or admin)."),
+        404: OpenApiResponse(description="Comment not found."),
+    }
+)
 class DeleteComment(generics.RetrieveDestroyAPIView):
     """
     Retrieve or delete a specific comment of a specific task.
